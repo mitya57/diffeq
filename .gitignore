@@ -1,0 +1,5 @@
+*.o
+*.out
+diffeq
+Makefile
+moc_*.cpp
