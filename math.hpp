@@ -13,8 +13,6 @@ struct Monom {
 class Polynom: public QList<Monom> {
 public:
 	qreal operator()(QPointF point);
-	void operator+=(const Monom &m);
-	void operator+=(const Polynom &p);
 };
 
 class PolynomSystem: public QPair<Polynom, Polynom> {

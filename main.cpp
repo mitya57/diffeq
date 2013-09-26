@@ -12,7 +12,7 @@ void fillPolynom(QString line, Polynom &polynom) {
 		m.xPow = subParts.at(1).toDouble();
 		m.yPow = subParts.at(2).toDouble();
 		m.c = subParts.at(0).toInt();
-		polynom += m;
+		polynom.append(m);
 	}
 }
 

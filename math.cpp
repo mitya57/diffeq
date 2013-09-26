@@ -8,18 +8,6 @@ qreal Polynom::operator()(QPointF point) {
 	return result;
 }
 
-void Polynom::operator+=(const Monom &m) {
-	for (Iterator i = begin(); i != end(); ++i) {
-		if (i->xPow == m.xPow && i->yPow == m.yPow) {
-			i->c += m.c;
-			return;
-		}
-	}
-	if (!qFuzzyIsNull(m.c)) {
-		append(m);
-	}
-}
-
 QPointF PolynomSystem::getNextValue(QPointF point, qreal eps) {
 	QPointF result = point;
 	result.setX(result.x() + first(point) * eps);
