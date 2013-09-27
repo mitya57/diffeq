@@ -1,4 +1,4 @@
-#include <QVector2D>
+#include <QtGui/QVector2D>
 #include "math.hpp"
 
 qreal Polynom::operator()(QPointF point) {
@@ -29,7 +29,11 @@ qreal PolynomSystem::poincareFunction(qreal p, qreal eps) {
 }
 
 qreal PolynomSystem::findPoincareStaticPoint(qreal a, qreal b, qreal eps) {
-	qreal pdiffa, pdiffb;
+	qreal pdiffa = poincareFunction(a, eps) - a;
+	qreal pdiffb = poincareFunction(b, eps) - b;
+	if (pdiffa * pdiffb > 0) {
+		return 0;
+	}
 	while (qAbs(b - a) > eps) {
 		pdiffa = poincareFunction(a, eps) - a;
 		pdiffb = poincareFunction(b, eps) - b;

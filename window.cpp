@@ -1,10 +1,11 @@
 #include <QtGui/QPainter>
 #include "window.hpp"
 
-#define CONVERT_X(x) x1 + ((x * scale + 1) / 2) * (x2 - x1)
-#define CONVERT_Y(y) y1 + ((y * scale + 1) / 2) * (y2 - y1)
+#define CONVERT_X(x) (x1 + ((x * scale + 1) / 2) * (x2 - x1))
+#define CONVERT_Y(y) (y1 + ((y * scale + 1) / 2) * (y2 - y1))
 #define CONVERT(point) CONVERT_X(point.x()), CONVERT_Y(point.y())
 #define WINDOW qobject_cast<MyMainWindow *>
+#define EPS 0.05
 
 MyMainWindow::MyMainWindow(PolynomSystem *system):
 	drawArea(system, this)
@@ -17,20 +18,40 @@ MyMainWindow::MyMainWindow(PolynomSystem *system):
 DrawArea::DrawArea(PolynomSystem *system, QWidget *parent):
 	QWidget(parent),
 	scale(.2),
+	startPoint(2, 0),
 	system(system)
 {}
 
 void DrawArea::paintEvent(QPaintEvent *event) {
 	QWidget::paintEvent(event);
 	drawAxes(5);
-	drawPath(QPointF(2, 0), 0.05);
-	drawPath(QPointF(-2, 0), 0.05);
+	drawPath(startPoint, EPS);
+	qreal staticPoint = system->findPoincareStaticPoint(.1, 5, EPS);
+	if (qAbs(staticPoint) > EPS) {
+		drawPath(QPointF(staticPoint, 0), EPS);
+	}
 }
 
 void DrawArea::wheelEvent(QWheelEvent *event) {
 	int delta = event->delta();
-	scale *= qExp(double(delta) / 2048);
+	scale *= qExp(qreal(delta) / 2048);
 	repaint();
+}
+
+void DrawArea::mouseMoveEvent(QMouseEvent *event) {
+	QRect rectangle = rect();
+	int x1 = rectangle.topLeft().x();
+	int x2 = rectangle.topRight().x();
+	int y1 = rectangle.topLeft().y();
+	int y2 = rectangle.bottomLeft().y();
+	qreal x = (qreal(event->x() - x1) * 2 / (x2 - x1) - 1) / scale;
+	qreal y = (qreal(event->y() - y1) * 2 / (y2 - y1) - 1) / scale;
+	startPoint = QPointF(x, y);
+	repaint();
+}
+
+void DrawArea::mouseReleaseEvent(QMouseEvent *event) {
+	mouseMoveEvent(event);
 }
 
 void DrawArea::drawAxes(qreal ticksize) {
@@ -63,13 +84,20 @@ void DrawArea::drawPath(QPointF start, qreal eps) {
 	painter.setRenderHint(QPainter::Antialiasing);
 	QRect rectangle = rect();
 	QPointF point;
+	qreal staticPoint = system->findPoincareStaticPoint(.1, 5, eps);
 	int x1 = rectangle.topLeft().x();
 	int x2 = rectangle.topRight().x();
 	int y1 = rectangle.topLeft().y();
 	int y2 = rectangle.bottomLeft().y();
-	for (int i = 0; i < 1000; ++i) {
+	qreal xdiff = !start.isNull();
+	quint32 step = 0;
+	while (qAbs(xdiff) > 1e-3 && step < 1000) {
 		point = system->getNextValue(start, eps);
 		painter.drawLine(CONVERT(start), CONVERT(point));
+		if (qAbs(point.y()) < eps && point.x() > 0 && staticPoint > 0) {
+			xdiff = point.x() - staticPoint;
+		}
 		start = point;
+		++step;
 	}
 }
