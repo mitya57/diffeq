@@ -60,6 +60,7 @@ void DrawArea::drawAxes(qreal ticksize) {
 void DrawArea::drawPath(PolynomSystem *system, QPointF start, qreal eps) {
 	QPainter painter(this);
 	painter.setPen(Qt::black);
+	painter.setRenderHint(QPainter::Antialiasing);
 	QRect rectangle = rect();
 	QPointF point;
 	int x1 = rectangle.topLeft().x();
