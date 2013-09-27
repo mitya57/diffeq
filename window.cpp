@@ -23,8 +23,8 @@ DrawArea::DrawArea(PolynomSystem *system, QWidget *parent):
 void DrawArea::paintEvent(QPaintEvent *event) {
 	QWidget::paintEvent(event);
 	drawAxes(5);
-	drawPath(system, QPointF(2, 0), 0.05);
-	drawPath(system, QPointF(-2, 0), 0.05);
+	drawPath(QPointF(2, 0), 0.05);
+	drawPath(QPointF(-2, 0), 0.05);
 }
 
 void DrawArea::wheelEvent(QWheelEvent *event) {
@@ -57,7 +57,7 @@ void DrawArea::drawAxes(qreal ticksize) {
 	}
 }
 
-void DrawArea::drawPath(PolynomSystem *system, QPointF start, qreal eps) {
+void DrawArea::drawPath(QPointF start, qreal eps) {
 	QPainter painter(this);
 	painter.setPen(Qt::black);
 	painter.setRenderHint(QPainter::Antialiasing);

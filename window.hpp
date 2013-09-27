@@ -17,7 +17,7 @@ private:
 
 	void drawAxes(qreal ticksize);
 	void drawFunction();
-	void drawPath(PolynomSystem *system, QPointF start, qreal eps);
+	void drawPath(QPointF start, qreal eps);
 };
 
 class MyMainWindow: public QMainWindow {
