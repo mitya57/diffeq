@@ -1,3 +1,6 @@
+#include <QtCore/QFile>
+#include <QtCore/QStringList>
+#include <QtCore/QTextStream>
 #include <QtGui/QVector2D>
 #include "math.hpp"
 
@@ -42,4 +45,27 @@ qreal PolynomSystem::findPoincareStaticPoint(qreal a, qreal b, qreal eps) {
 		b = a - (a - b) * pdiffa / (pdiffa - pdiffb);
 	}
 	return b;
+}
+
+void fillPolynom(QString line, Polynom &polynom) {
+	QStringList parts = line.split("  ");
+	QStringList subParts;
+	Monom m;
+	polynom.clear();
+	for (int i = 0; i < parts.size(); ++i) {
+		subParts = parts.at(i).split(' ');
+		m.xPow = subParts.at(1).toDouble();
+		m.yPow = subParts.at(2).toDouble();
+		m.c = subParts.at(0).toInt();
+		polynom.append(m);
+	}
+}
+
+void fillSystem(QString fileName, PolynomSystem &system) {
+	QFile inputFile(fileName);
+	inputFile.open(QFile::ReadOnly);
+	QTextStream input(&inputFile);
+	fillPolynom(input.readLine(), system.first);
+	fillPolynom(input.readLine(), system.second);
+	inputFile.close();
 }

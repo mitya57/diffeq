@@ -21,3 +21,6 @@ public:
 	qreal poincareFunction(qreal p, qreal eps);
 	qreal findPoincareStaticPoint(qreal a, qreal b, qreal eps);
 };
+
+void fillPolynom(QString line, Polynom &polynom);
+void fillSystem(QString fileName, PolynomSystem &system);
