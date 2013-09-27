@@ -1,3 +1,4 @@
+#include <QVector2D>
 #include "math.hpp"
 
 qreal Polynom::operator()(QPointF point) {
@@ -9,10 +10,12 @@ qreal Polynom::operator()(QPointF point) {
 }
 
 QPointF PolynomSystem::getNextValue(QPointF point, qreal eps) {
-	QPointF result = point;
-	result.setX(result.x() + first(point) * eps);
-	result.setY(result.y() + second(point) * eps);
-	return result;
+	QVector2D diff(first(point), second(point));
+	if (diff.length() > 1) {
+		diff /= diff.length();
+	}
+	diff *= eps;
+	return point += diff.toPointF();
 }
 
 qreal PolynomSystem::poincareFunction(qreal p, qreal eps) {
