@@ -1,3 +1,4 @@
+#include <QtCore/QDir>
 #include <QtGui/QPainter>
 #include "window.hpp"
 
@@ -8,11 +9,24 @@
 #define EPS 0.05
 
 MyMainWindow::MyMainWindow(PolynomSystem *system):
-	drawArea(system, this)
+	drawArea(system, this),
+	fileActionGroup(this)
 {
 	resize(1000, 800);
 	setCentralWidget(&drawArea);
 	addToolBar(&toolBar);
+
+	QStringList nameFilters, files;
+	nameFilters << "sys*.txt";
+	files = QDir().entryList(nameFilters,
+		QDir::Files | QDir::Readable);
+	for (int i = 0; i < files.size(); ++i) {
+		QAction *action = fileActionGroup.addAction(files.at(i));
+		action->setCheckable(true);
+		toolBar.addAction(action);
+	}
+	connect(&fileActionGroup, SIGNAL(triggered(QAction*)),
+		&drawArea, SLOT(loadFile(QAction*)));
 }
 
 DrawArea::DrawArea(PolynomSystem *system, QWidget *parent):
@@ -21,6 +35,11 @@ DrawArea::DrawArea(PolynomSystem *system, QWidget *parent):
 	startPoint(2, 0),
 	system(system)
 {}
+
+void DrawArea::loadFile(QAction *action) {
+	fillSystem(action->text(), *system);
+	repaint();
+}
 
 void DrawArea::paintEvent(QPaintEvent *event) {
 	QWidget::paintEvent(event);

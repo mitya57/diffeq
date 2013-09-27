@@ -1,4 +1,5 @@
 #include <QtGui/QWheelEvent>
+#include <QtWidgets/QAction>
 #include <QtWidgets/QMainWindow>
 #include <QtWidgets/QToolBar>
 #include "math.hpp"
@@ -12,6 +13,9 @@ public:
 	virtual void wheelEvent(QWheelEvent *event);
 	virtual void mouseMoveEvent(QMouseEvent *event);
 	virtual void mouseReleaseEvent(QMouseEvent *event);
+
+public slots:
+	void loadFile(QAction *action);
 
 private:
 	qreal scale;
@@ -32,4 +36,5 @@ public:
 private:
 	DrawArea drawArea;
 	QToolBar toolBar;
+	QActionGroup fileActionGroup;
 };
