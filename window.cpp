@@ -83,8 +83,11 @@ void DrawArea::paintEvent(QPaintEvent *event) {
 
 void DrawArea::wheelEvent(QWheelEvent *event) {
 	int delta = event->delta();
-	scale *= qExp(qreal(delta) / 2048);
-	repaint();
+	qreal newScale = scale * qExp(qreal(delta) / 2048);
+	if (newScale > 0.05 && newScale < 30) {
+		scale = newScale;
+		repaint();
+	}
 }
 
 void DrawArea::mouseMoveEvent(QMouseEvent *event) {
