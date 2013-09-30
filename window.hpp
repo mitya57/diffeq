@@ -16,9 +16,11 @@ public:
 
 public slots:
 	void loadFile(QAction *action);
+	void drawMesh(bool yes);
 
 private:
 	qreal scale;
+	bool doDrawMesh;
 	QPointF startPoint;
 	PolynomSystem *system;
 
@@ -36,5 +38,6 @@ public:
 private:
 	DrawArea drawArea;
 	QToolBar toolBar;
+	QAction drawMeshAction;
 	QActionGroup fileActionGroup;
 };

@@ -5,11 +5,20 @@
 #define CONVERT_X(x) (x1 + ((x * scale + 1) / 2) * (x2 - x1))
 #define CONVERT_Y(y) (y1 + ((y * scale + 1) / 2) * (y2 - y1))
 #define CONVERT(point) CONVERT_X(point.x()), CONVERT_Y(point.y())
+#define CONVERTBACK_X(x) ((qreal(x - x1) * 2 / (x2 - x1) - 1) / scale)
+#define CONVERTBACK_Y(y) ((qreal(y - y1) * 2 / (y2 - y1) - 1) / scale)
 #define WINDOW qobject_cast<MyMainWindow *>
+#define DEFINE_RECT QRect rectangle = rect(); \
+	int x1 = rectangle.topLeft().x(); \
+	int x2 = rectangle.topRight().x(); \
+	int y1 = rectangle.topLeft().y(); \
+	int y2 = rectangle.bottomLeft().y()
+#define POINTS 5
 #define EPS 0.05
 
 MyMainWindow::MyMainWindow(PolynomSystem *system):
 	drawArea(system, this),
+	drawMeshAction("Draw Mesh", this),
 	fileActionGroup(this)
 {
 	resize(1000, 800);
@@ -27,11 +36,17 @@ MyMainWindow::MyMainWindow(PolynomSystem *system):
 	}
 	connect(&fileActionGroup, SIGNAL(triggered(QAction*)),
 		&drawArea, SLOT(loadFile(QAction*)));
+
+	drawMeshAction.setCheckable(true);
+	toolBar.addAction(&drawMeshAction);
+	connect(&drawMeshAction, SIGNAL(triggered(bool)),
+		&drawArea, SLOT(drawMesh(bool)));
 }
 
 DrawArea::DrawArea(PolynomSystem *system, QWidget *parent):
 	QWidget(parent),
 	scale(.2),
+	doDrawMesh(false),
 	startPoint(2, 0),
 	system(system)
 {}
@@ -41,13 +56,28 @@ void DrawArea::loadFile(QAction *action) {
 	repaint();
 }
 
+void DrawArea::drawMesh(bool yes) {
+	doDrawMesh = yes;
+	repaint();
+}
+
 void DrawArea::paintEvent(QPaintEvent *event) {
+	DEFINE_RECT;
 	QWidget::paintEvent(event);
 	drawAxes(5);
-	drawPath(startPoint, EPS);
 	qreal staticPoint = system->findPoincareStaticPoint(.1, 5, EPS);
 	if (qAbs(staticPoint) > EPS) {
 		drawPath(QPointF(staticPoint, 0), EPS);
+	}
+	if (doDrawMesh) {
+		for (int i = 0; i <= POINTS; ++i) {
+			drawPath(QPointF(CONVERTBACK_X((x1 * i + x2 * (POINTS - i)) / POINTS),
+				CONVERTBACK_Y(y1)), EPS);
+			drawPath(QPointF(CONVERTBACK_X((x1 * i + x2 * (POINTS - i)) / POINTS),
+				CONVERTBACK_Y(y2)), EPS);
+		}
+	} else {
+		drawPath(startPoint, EPS);
 	}
 }
 
@@ -58,13 +88,9 @@ void DrawArea::wheelEvent(QWheelEvent *event) {
 }
 
 void DrawArea::mouseMoveEvent(QMouseEvent *event) {
-	QRect rectangle = rect();
-	int x1 = rectangle.topLeft().x();
-	int x2 = rectangle.topRight().x();
-	int y1 = rectangle.topLeft().y();
-	int y2 = rectangle.bottomLeft().y();
-	qreal x = (qreal(event->x() - x1) * 2 / (x2 - x1) - 1) / scale;
-	qreal y = (qreal(event->y() - y1) * 2 / (y2 - y1) - 1) / scale;
+	DEFINE_RECT;
+	qreal x = CONVERTBACK_X(event->x());
+	qreal y = CONVERTBACK_Y(event->y());
 	startPoint = QPointF(x, y);
 	repaint();
 }
@@ -74,13 +100,9 @@ void DrawArea::mouseReleaseEvent(QMouseEvent *event) {
 }
 
 void DrawArea::drawAxes(qreal ticksize) {
+	DEFINE_RECT;
 	QPainter painter(this);
-	QRect rectangle = rect();
 	painter.setPen(Qt::lightGray);
-	int x1 = rectangle.topLeft().x();
-	int x2 = rectangle.topRight().x();
-	int y1 = rectangle.topLeft().y();
-	int y2 = rectangle.bottomLeft().y();
 	painter.drawLine((x1+x2)/2, y1, (x1+x2)/2, y2);
 	painter.drawLine(x1, (y1+y2)/2, x2, (y1+y2)/2);
 	qreal newx = 0, startx = CONVERT_X(0), starty = CONVERT_Y(0);
@@ -98,16 +120,12 @@ void DrawArea::drawAxes(qreal ticksize) {
 }
 
 void DrawArea::drawPath(QPointF start, qreal eps) {
+	DEFINE_RECT;
 	QPainter painter(this);
 	painter.setPen(Qt::black);
 	painter.setRenderHint(QPainter::Antialiasing);
-	QRect rectangle = rect();
 	QPointF point;
 	qreal staticPoint = system->findPoincareStaticPoint(.1, 5, eps);
-	int x1 = rectangle.topLeft().x();
-	int x2 = rectangle.topRight().x();
-	int y1 = rectangle.topLeft().y();
-	int y2 = rectangle.bottomLeft().y();
 	qreal xdiff = !start.isNull();
 	quint32 step = 0;
 	while (qAbs(xdiff) > 1e-3 && step < 1000) {
