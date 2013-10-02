@@ -17,12 +17,13 @@
 
 MyMainWindow::MyMainWindow(PolynomSystem *system):
 	drawArea(system, this),
-	drawMeshAction("Draw Mesh", this),
+	drawMeshAction(tr("Draw Mesh"), this),
 	fileActionGroup(this)
 {
 	resize(1000, 800);
 	setCentralWidget(&drawArea);
 	addToolBar(&toolBar);
+	setWindowTitle(tr("Differential equations"));
 
 	QStringList nameFilters, files;
 	nameFilters << "sys*.txt";
