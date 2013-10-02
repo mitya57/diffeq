@@ -3,3 +3,4 @@
 diffeq
 Makefile
 moc_*.cpp
+*.qm
