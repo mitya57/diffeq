@@ -3,12 +3,25 @@
 #include <QtCore/QPair>
 #include <QtCore/QPointF>
 #include <QtCore/qmath.h>
+#include <complex>
 
 struct Monom {
 	quint32 xPow;
 	quint32 yPow;
 	qreal c;
 };
+
+enum PointType {
+	PointCenter,
+	PointFocusStable,
+	PointFocusUnstable,
+	PointKnotStable,
+	PointKnotUnstable,
+	PointSaddle
+};
+
+typedef std::complex<qreal> Complex;
+typedef QPair<Complex, Complex> ComplexPair;
 
 class Polynom: public QList<Monom> {
 public:
@@ -20,6 +33,8 @@ public:
 	QPointF getNextValue(QPointF point, qreal eps);
 	qreal poincareFunction(qreal p, qreal eps);
 	qreal findPoincareStaticPoint(qreal a, qreal b, qreal eps);
+	ComplexPair getEigenValues();
+	PointType getPointType();
 };
 
 void fillPolynom(QString line, Polynom &polynom);

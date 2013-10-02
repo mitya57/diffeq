@@ -7,7 +7,6 @@
 #define CONVERT(point) CONVERT_X(point.x()), CONVERT_Y(point.y())
 #define CONVERTBACK_X(x) ((qreal(x - x1) * 2 / (x2 - x1) - 1) / scale)
 #define CONVERTBACK_Y(y) ((qreal(y - y1) * 2 / (y2 - y1) - 1) / scale)
-#define WINDOW qobject_cast<MyMainWindow *>
 #define DEFINE_RECT QRect rectangle = rect(); \
 	int x1 = rectangle.topLeft().x(); \
 	int x2 = rectangle.topRight().x(); \
@@ -33,6 +32,10 @@ MyMainWindow::MyMainWindow(PolynomSystem *system):
 		QAction *action = fileActionGroup.addAction(files.at(i));
 		action->setCheckable(true);
 		toolBar.addAction(action);
+		if (!i) {
+			action->setChecked(true);
+			drawArea.loadFile(action);
+		}
 	}
 	connect(&fileActionGroup, SIGNAL(triggered(QAction*)),
 		&drawArea, SLOT(loadFile(QAction*)));
@@ -53,7 +56,21 @@ DrawArea::DrawArea(PolynomSystem *system, QWidget *parent):
 
 void DrawArea::loadFile(QAction *action) {
 	fillSystem(action->text(), *system);
+	PointType pointType = system->getPointType();
+	pointTypeName = getPointTypeName(pointType);
 	repaint();
+}
+
+QString DrawArea::getPointTypeName(PointType type) {
+	switch(type) {
+		case PointCenter:        return tr("Center");
+		case PointFocusStable:   return tr("Stable focus");
+		case PointFocusUnstable: return tr("Unstable focus");
+		case PointKnotStable:    return tr("Stable knot");
+		case PointKnotUnstable:  return tr("Unstable knot");
+		case PointSaddle:        return tr("Saddle");
+	}
+	return QString();
 }
 
 void DrawArea::drawMesh(bool yes) {
@@ -79,6 +96,9 @@ void DrawArea::paintEvent(QPaintEvent *event) {
 	} else {
 		drawPath(startPoint, EPS);
 	}
+	QString statusText = tr("Point type: %1  Scale: %2").arg(
+		pointTypeName, QString::number(scale * 5, 'g', 3));
+	QPainter(this).drawText(10, height() - 10, statusText);
 }
 
 void DrawArea::wheelEvent(QWheelEvent *event) {

@@ -61,6 +61,51 @@ void fillPolynom(QString line, Polynom &polynom) {
 	}
 }
 
+ComplexPair PolynomSystem::getEigenValues() {
+	ComplexPair result;
+	qreal a = 0, b = 0, c = 0, d = 0;
+	Polynom::ConstIterator i;
+	for (i = first.begin(); i != first.end(); ++i) {
+		if (i->xPow == 1 && i->yPow == 0) {
+			a = i->c;
+		} else if (i->xPow == 0 && i->yPow == 1) {
+			b = i->c;
+		}
+	}
+	for (i = second.begin(); i != second.end(); ++i) {
+		if (i->xPow == 1 && i->yPow == 0) {
+			c = i->c;
+		} else if (i->xPow == 0 && i->yPow == 1) {
+			d = i->c;
+		}
+	}
+	qreal determinant = (a - d) * (a - d) + 4 * b * c;
+	Complex detSqrt = std::sqrt(Complex(determinant, 0));
+	result.first  = (Complex(a + d, 0) + detSqrt) * .5;
+	result.second = (Complex(a + d, 0) - detSqrt) * .5;
+	return result;
+}
+
+PointType PolynomSystem::getPointType() {
+	ComplexPair eigenValues = getEigenValues();
+	Complex v1 = eigenValues.first, v2 = eigenValues.second;
+	if (qFuzzyIsNull(v1.real()) && qFuzzyIsNull(v2.real())) {
+		return PointCenter;
+	} else if (qFuzzyIsNull(v1.imag()) && qFuzzyIsNull(v2.imag())) {
+		if (v1.real() > 0 && v2.real() > 0) {
+			return PointKnotUnstable;
+		} else if (v1.real() < 0 && v2.real() < 0) {
+			return PointKnotStable;
+		} else {
+			return PointSaddle;
+		}
+	} else if (v1.real() > 0) {
+		return PointFocusUnstable;
+	} else {
+		return PointFocusStable;
+	}
+}
+
 void fillSystem(QString fileName, PolynomSystem &system) {
 	QFile inputFile(fileName);
 	inputFile.open(QFile::ReadOnly);
