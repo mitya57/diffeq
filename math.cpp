@@ -81,8 +81,8 @@ ComplexPair PolynomSystem::getEigenValues() {
 	}
 	qreal determinant = (a - d) * (a - d) + 4 * b * c;
 	Complex detSqrt = std::sqrt(Complex(determinant, 0));
-	result.first  = (Complex(a + d, 0) + detSqrt) * .5;
-	result.second = (Complex(a + d, 0) - detSqrt) * .5;
+	result.first  = (Complex(a + d, 0) + detSqrt) * Complex(.5, 0);
+	result.second = (Complex(a + d, 0) - detSqrt) * Complex(.5, 0);
 	return result;
 }
 
