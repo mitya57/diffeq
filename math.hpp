@@ -25,6 +25,7 @@ typedef QPair<Complex, Complex> ComplexPair;
 
 class Polynom: public QList<Monom> {
 public:
+	qreal operator()(qreal x, qreal y);
 	qreal operator()(QPointF point);
 };
 

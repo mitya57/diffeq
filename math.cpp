@@ -4,12 +4,16 @@
 #include <QtGui/QVector2D>
 #include "math.hpp"
 
-qreal Polynom::operator()(QPointF point) {
+qreal Polynom::operator()(qreal x, qreal y) {
 	qreal result = 0;
 	for (ConstIterator i = begin(); i != end(); ++i) {
-		result += qPow(point.x(), i->xPow) * qPow(point.y(), i->yPow) * i->c;
+		result += qPow(x, i->xPow) * qPow(y, i->yPow) * i->c;
 	}
 	return result;
+}
+
+qreal Polynom::operator()(QPointF point) {
+	return operator()(point.x(), point.y());
 }
 
 QPointF PolynomSystem::getNextValue(QPointF point, qreal eps) {
