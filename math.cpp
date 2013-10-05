@@ -16,13 +16,24 @@ qreal Polynom::operator()(QPointF point) {
 	return operator()(point.x(), point.y());
 }
 
-QPointF PolynomSystem::getNextValue(QPointF point, qreal eps) {
+QPointF PolynomSystem::getNextValue(QPointF point, qreal eps, bool useRungeKutta) {
 	QVector2D diff(first(point), second(point));
+	if (useRungeKutta) {
+		qreal x = point.x(), y = point.y();
+		qreal first25  = first (x + eps * first(point) / 2, y + eps * second(point) / 2);
+		qreal second25 = second(x + eps * first(point) / 2, y + eps * second(point) / 2);
+		qreal first50  = first (x + eps * first25 / 2, y + eps * second25 / 2);
+		qreal second50 = second(x + eps * first25 / 2, y + eps * second25 / 2);
+		qreal first75  = first (x + eps * first50, y + eps * second50);
+		qreal second75 = second(x + eps * first50, y + eps * second50);
+		diff.setX((first (point) + 2 * first25  + 2 * first50  + first75 ) / 6);
+		diff.setY((second(point) + 2 * second25 + 2 * second50 + second75) / 6);
+	}
 	if (diff.length() > 1) {
 		diff /= diff.length();
 	}
 	diff *= eps;
-	return point += diff.toPointF();
+	return point + diff.toPointF();
 }
 
 qreal PolynomSystem::poincareFunction(qreal p, qreal eps) {

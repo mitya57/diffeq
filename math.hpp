@@ -31,7 +31,7 @@ public:
 
 class PolynomSystem: public QPair<Polynom, Polynom> {
 public:
-	QPointF getNextValue(QPointF point, qreal eps);
+	QPointF getNextValue(QPointF point, qreal eps, bool useRungeKutta = false);
 	qreal poincareFunction(qreal p, qreal eps);
 	qreal findPoincareStaticPoint(qreal a, qreal b, qreal eps);
 	ComplexPair getEigenValues();
