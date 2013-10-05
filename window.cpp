@@ -95,6 +95,7 @@ void DrawArea::paintEvent(QPaintEvent *event) {
 				CONVERTBACK_Y(y2)), EPS);
 		}
 	} else {
+		drawPath(startPoint, -EPS, Qt::lightGray);
 		drawPath(startPoint, EPS);
 	}
 	QString statusText = tr("Point type: %1  Scale: %2").arg(
@@ -143,19 +144,19 @@ void DrawArea::drawAxes(qreal ticksize) {
 	}
 }
 
-void DrawArea::drawPath(QPointF start, qreal eps) {
+void DrawArea::drawPath(QPointF start, qreal eps, QColor color) {
 	DEFINE_RECT;
 	QPainter painter(this);
-	painter.setPen(Qt::black);
+	painter.setPen(color);
 	painter.setRenderHint(QPainter::Antialiasing);
 	QPointF point;
-	qreal staticPoint = system->findPoincareStaticPoint(.1, 5, eps);
+	qreal staticPoint = system->findPoincareStaticPoint(.1, 5, qAbs(eps));
 	qreal xdiff = !start.isNull();
 	quint32 step = 0;
 	while (qAbs(xdiff) > 1e-3 && step < 1000) {
 		point = system->getNextValue(start, eps);
 		painter.drawLine(CONVERT(start), CONVERT(point));
-		if (qAbs(point.y()) < eps && point.x() > 0 && staticPoint > 0) {
+		if (qAbs(point.y()) < qAbs(eps) && point.x() > 0 && staticPoint > 0) {
 			xdiff = point.x() - staticPoint;
 		}
 		start = point;
