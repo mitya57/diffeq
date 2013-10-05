@@ -1,4 +1,3 @@
-#include <QtCore/QLocale>
 #include <QtCore/QTranslator>
 #include <QtWidgets/QApplication>
 #include "window.hpp"
