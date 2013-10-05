@@ -26,7 +26,6 @@ private:
 	QString pointTypeName;
 
 	void drawAxes(qreal ticksize);
-	void drawFunction();
 	void drawPath(QPointF start, qreal eps);
 	QString getPointTypeName(PointType type);
 };
