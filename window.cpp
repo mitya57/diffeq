@@ -17,6 +17,7 @@
 
 MyMainWindow::MyMainWindow(PolynomSystem *system):
 	drawArea(system, this),
+	toolBar("Toolbar", this),
 	drawMeshAction(tr("Draw Mesh"), this),
 	fileActionGroup(this),
 	paramSlider(Qt::Horizontal, this)
@@ -49,9 +50,11 @@ MyMainWindow::MyMainWindow(PolynomSystem *system):
 		&drawArea, SLOT(updateParam(int)));
 
 	drawMeshAction.setCheckable(true);
+	toolBar.addSeparator();
 	toolBar.addAction(&drawMeshAction);
 	connect(&drawMeshAction, SIGNAL(triggered(bool)),
 		&drawArea, SLOT(drawMesh(bool)));
+	toolBar.addSeparator();
 	toolBar.addWidget(&paramSlider);
 }
 
