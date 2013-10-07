@@ -38,5 +38,5 @@ public:
 	PointType getPointType();
 };
 
-void fillPolynom(QString line, Polynom &polynom);
-void fillSystem(QString fileName, PolynomSystem &system);
+void fillPolynom(QString line, Polynom &polynom, qreal param = 0);
+void fillSystem(QString fileName, PolynomSystem &system, qreal param = 0);

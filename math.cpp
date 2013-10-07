@@ -62,16 +62,16 @@ qreal PolynomSystem::findPoincareStaticPoint(qreal a, qreal b, qreal eps) {
 	return b;
 }
 
-void fillPolynom(QString line, Polynom &polynom) {
+void fillPolynom(QString line, Polynom &polynom, qreal param) {
 	QStringList parts = line.split("  ");
 	QStringList subParts;
 	Monom m;
 	polynom.clear();
 	for (int i = 0; i < parts.size(); ++i) {
 		subParts = parts.at(i).split(' ');
-		m.xPow = subParts.at(1).toDouble();
-		m.yPow = subParts.at(2).toDouble();
-		m.c = subParts.at(0).toInt();
+		m.xPow = subParts.at(1).toInt();
+		m.yPow = subParts.at(2).toInt();
+		m.c = subParts.at(0) == "c" ? param : subParts.at(0).toDouble();
 		polynom.append(m);
 	}
 }
@@ -121,11 +121,11 @@ PointType PolynomSystem::getPointType() {
 	}
 }
 
-void fillSystem(QString fileName, PolynomSystem &system) {
+void fillSystem(QString fileName, PolynomSystem &system, qreal param) {
 	QFile inputFile(fileName);
 	inputFile.open(QFile::ReadOnly);
 	QTextStream input(&inputFile);
-	fillPolynom(input.readLine(), system.first);
-	fillPolynom(input.readLine(), system.second);
+	fillPolynom(input.readLine(), system.first, param);
+	fillPolynom(input.readLine(), system.second, param);
 	inputFile.close();
 }

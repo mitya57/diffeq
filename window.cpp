@@ -18,7 +18,8 @@
 MyMainWindow::MyMainWindow(PolynomSystem *system):
 	drawArea(system, this),
 	drawMeshAction(tr("Draw Mesh"), this),
-	fileActionGroup(this)
+	fileActionGroup(this),
+	paramSlider(Qt::Horizontal, this)
 {
 	resize(1000, 800);
 	setCentralWidget(&drawArea);
@@ -40,23 +41,41 @@ MyMainWindow::MyMainWindow(PolynomSystem *system):
 	}
 	connect(&fileActionGroup, SIGNAL(triggered(QAction*)),
 		&drawArea, SLOT(loadFile(QAction*)));
+	paramSlider.setTickInterval(50);
+	paramSlider.setTickPosition(QSlider::TicksBothSides);
+	paramSlider.setRange(0, 300);
+	paramSlider.setValue(150);
+	connect(&paramSlider, SIGNAL(valueChanged(int)),
+		&drawArea, SLOT(updateParam(int)));
 
 	drawMeshAction.setCheckable(true);
 	toolBar.addAction(&drawMeshAction);
 	connect(&drawMeshAction, SIGNAL(triggered(bool)),
 		&drawArea, SLOT(drawMesh(bool)));
+	toolBar.addWidget(&paramSlider);
 }
 
 DrawArea::DrawArea(PolynomSystem *system, QWidget *parent):
 	QWidget(parent),
 	scale(.2),
+	param(1),
 	doDrawMesh(false),
 	startPoint(2, 0),
 	system(system)
 {}
 
 void DrawArea::loadFile(QAction *action) {
-	fillSystem(action->text(), *system);
+	fileName = action->text();
+	updateSystem();
+}
+
+void DrawArea::updateParam(int sliderParam) {
+	param = sliderParam * .02 - 2;
+	updateSystem();
+}
+
+void DrawArea::updateSystem() {
+	fillSystem(fileName, *system, param);
 	PointType pointType = system->getPointType();
 	pointTypeName = getPointTypeName(pointType);
 	repaint();
@@ -98,7 +117,8 @@ void DrawArea::paintEvent(QPaintEvent *event) {
 		drawPath(startPoint, -EPS, Qt::lightGray);
 		drawPath(startPoint, EPS);
 	}
-	QString statusText = tr("Point type: %1  Scale: %2").arg(
+	QString statusText = tr("Parameter: %1;  Point type: %2;  Scale: %3").arg(
+		QString::number(param, 'f', 2),
 		pointTypeName, QString::number(scale * 5, 'g', 3));
 	QPainter(this).drawText(10, height() - 10, statusText);
 }

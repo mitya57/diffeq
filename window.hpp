@@ -1,6 +1,7 @@
 #include <QtGui/QWheelEvent>
 #include <QtWidgets/QAction>
 #include <QtWidgets/QMainWindow>
+#include <QtWidgets/QSlider>
 #include <QtWidgets/QToolBar>
 #include "math.hpp"
 
@@ -16,18 +17,22 @@ public:
 
 public slots:
 	void loadFile(QAction *action);
+	void updateParam(int sliderParam);
 	void drawMesh(bool yes);
 
 private:
 	qreal scale;
+	qreal param;
 	bool doDrawMesh;
 	QPointF startPoint;
 	PolynomSystem *system;
 	QString pointTypeName;
+	QString fileName;
 
 	void drawAxes(qreal ticksize);
 	void drawPath(QPointF start, qreal eps, QColor color = Qt::black);
 	QString getPointTypeName(PointType type);
+	void updateSystem();
 };
 
 class MyMainWindow: public QMainWindow {
@@ -41,4 +46,5 @@ private:
 	QToolBar toolBar;
 	QAction drawMeshAction;
 	QActionGroup fileActionGroup;
+	QSlider paramSlider;
 };
