@@ -91,6 +91,8 @@ QString DrawArea::getPointTypeName(PointType type) {
 		case PointFocusUnstable: return tr("Unstable focus");
 		case PointKnotStable:    return tr("Stable knot");
 		case PointKnotUnstable:  return tr("Unstable knot");
+		case PointKnotSingularStable:   return tr("Stable singular knot");
+		case PointKnotSingularUnstable: return tr("Unstable singular knot");
 		case PointSaddle:        return tr("Saddle");
 	}
 	return QString();

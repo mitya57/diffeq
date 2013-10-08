@@ -41,6 +41,9 @@ qreal PolynomSystem::poincareFunction(qreal p, qreal eps) {
 	quint32 step = 0;
 	while (step < 10 || point.x() < 0 || qAbs(point.y()) > eps) {
 		point = getNextValue(point, eps);
+		if (step > 1000) {
+			return 0;
+		}
 		++step;
 	}
 	return point.x();
@@ -107,7 +110,13 @@ PointType PolynomSystem::getPointType() {
 	if (qFuzzyIsNull(v1.real()) && qFuzzyIsNull(v2.real())) {
 		return PointCenter;
 	} else if (qFuzzyIsNull(v1.imag()) && qFuzzyIsNull(v2.imag())) {
-		if (v1.real() > 0 && v2.real() > 0) {
+		if (qFuzzyCompare(v1.real(), v2.real())) {
+			if (v1.real() > 0) {
+				return PointKnotSingularUnstable;
+			} else {
+				return PointKnotSingularStable;
+			}
+		} else if (v1.real() > 0 && v2.real() > 0) {
 			return PointKnotUnstable;
 		} else if (v1.real() < 0 && v2.real() < 0) {
 			return PointKnotStable;

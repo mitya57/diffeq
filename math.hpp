@@ -17,6 +17,8 @@ enum PointType {
 	PointFocusUnstable,
 	PointKnotStable,
 	PointKnotUnstable,
+	PointKnotSingularStable,
+	PointKnotSingularUnstable,
 	PointSaddle
 };
 
