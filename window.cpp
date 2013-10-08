@@ -116,7 +116,11 @@ void DrawArea::paintEvent(QPaintEvent *event) {
 			drawPath(QPointF(CONVERTBACK_X((x1 * i + x2 * (POINTS - i)) / POINTS),
 				CONVERTBACK_Y(y1)), EPS);
 			drawPath(QPointF(CONVERTBACK_X((x1 * i + x2 * (POINTS - i)) / POINTS),
+				CONVERTBACK_Y(y1)), -EPS);
+			drawPath(QPointF(CONVERTBACK_X((x1 * i + x2 * (POINTS - i)) / POINTS),
 				CONVERTBACK_Y(y2)), EPS);
+			drawPath(QPointF(CONVERTBACK_X((x1 * i + x2 * (POINTS - i)) / POINTS),
+				CONVERTBACK_Y(y2)), -EPS);
 		}
 	} else {
 		drawPath(startPoint, -EPS, Qt::lightGray);
