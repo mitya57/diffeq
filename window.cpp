@@ -10,8 +10,8 @@
 #define DEFINE_RECT QRect rectangle = rect(); \
 	int x1 = rectangle.topLeft().x(); \
 	int x2 = rectangle.topRight().x(); \
-	int y1 = rectangle.topLeft().y(); \
-	int y2 = rectangle.bottomLeft().y()
+	int y1 = rectangle.bottomLeft().y(); \
+	int y2 = rectangle.topLeft().y()
 #define POINTS 5
 #define EPS 0.05
 
