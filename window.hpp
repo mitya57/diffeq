@@ -1,5 +1,6 @@
 #include <QtGui/QWheelEvent>
 #include <QtWidgets/QAction>
+#include <QtWidgets/QComboBox>
 #include <QtWidgets/QMainWindow>
 #include <QtWidgets/QSlider>
 #include <QtWidgets/QToolBar>
@@ -18,11 +19,13 @@ public:
 public slots:
 	void loadFile(QAction *action);
 	void updateParam(int sliderParam);
+	void updatePrecision(int index);
 	void drawMesh(bool yes);
 
 private:
 	qreal scale;
 	qreal param;
+	qreal precision;
 	bool doDrawMesh;
 	QPointF startPoint;
 	PolynomSystem *system;
@@ -30,7 +33,7 @@ private:
 	QString fileName;
 
 	void drawAxes(qreal ticksize);
-	void drawPath(QPointF start, qreal eps, QColor color = Qt::black);
+	void drawPath(QPointF start, QColor color = Qt::black, bool backwards = false);
 	QString getPointTypeName(PointType type);
 	void updateSystem();
 };
@@ -47,4 +50,5 @@ private:
 	QAction drawMeshAction;
 	QActionGroup fileActionGroup;
 	QSlider paramSlider;
+	QComboBox precisionBox;
 };

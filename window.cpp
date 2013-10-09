@@ -13,7 +13,6 @@
 	int y1 = rectangle.bottomLeft().y(); \
 	int y2 = rectangle.topLeft().y()
 #define POINTS 5
-#define EPS 0.05
 
 MyMainWindow::MyMainWindow(PolynomSystem *system):
 	drawArea(system, this),
@@ -48,6 +47,13 @@ MyMainWindow::MyMainWindow(PolynomSystem *system):
 	paramSlider.setValue(150);
 	connect(&paramSlider, SIGNAL(valueChanged(int)),
 		&drawArea, SLOT(updateParam(int)));
+	precisionBox.addItem("0.1", 0.1);
+	precisionBox.addItem("0.05", 0.05);
+	precisionBox.addItem("0.01", 0.01);
+	precisionBox.addItem("0.005", 0.005);
+	precisionBox.addItem("0.001", 0.001);
+	connect(&precisionBox, SIGNAL(currentIndexChanged(int)),
+		&drawArea, SLOT(updatePrecision(int)));
 
 	drawMeshAction.setCheckable(true);
 	toolBar.addSeparator();
@@ -56,12 +62,15 @@ MyMainWindow::MyMainWindow(PolynomSystem *system):
 		&drawArea, SLOT(drawMesh(bool)));
 	toolBar.addSeparator();
 	toolBar.addWidget(&paramSlider);
+	toolBar.addSeparator();
+	toolBar.addWidget(&precisionBox);
 }
 
 DrawArea::DrawArea(PolynomSystem *system, QWidget *parent):
 	QWidget(parent),
 	scale(.2),
 	param(1),
+	precision(0.1),
 	doDrawMesh(false),
 	startPoint(2, 0),
 	system(system)
@@ -75,6 +84,12 @@ void DrawArea::loadFile(QAction *action) {
 void DrawArea::updateParam(int sliderParam) {
 	param = sliderParam * .02 - 2;
 	updateSystem();
+}
+
+void DrawArea::updatePrecision(int index) {
+	QComboBox *comboBox = qobject_cast<QComboBox *>(sender());
+	precision = comboBox->itemData(index).toDouble();
+	repaint();
 }
 
 void DrawArea::updateSystem() {
@@ -106,21 +121,21 @@ void DrawArea::drawMesh(bool yes) {
 void DrawArea::paintEvent(QPaintEvent *event) {
 	QWidget::paintEvent(event);
 	drawAxes(5);
-	qreal staticPoint = system->findPoincareStaticPoint(.1, 5, EPS);
-	if (qAbs(staticPoint) > EPS) {
-		drawPath(QPointF(staticPoint, 0), EPS);
+	qreal staticPoint = system->findPoincareStaticPoint(.1, 5, precision);
+	if (qAbs(staticPoint) > precision) {
+		drawPath(QPointF(staticPoint, 0));
 	}
 	if (doDrawMesh) {
 		for (int i = 0; i <= POINTS; ++i) {
 			qreal newx = (1 - 2. * i / POINTS) / scale;
-			drawPath(QPointF(newx, -1. / scale), EPS);
-			drawPath(QPointF(newx, -1. / scale), -EPS);
-			drawPath(QPointF(newx, 1. / scale), EPS);
-			drawPath(QPointF(newx, 1. / scale), -EPS);
+			drawPath(QPointF(newx, -1. / scale));
+			drawPath(QPointF(newx, -1. / scale), Qt::black, true);
+			drawPath(QPointF(newx, 1. / scale));
+			drawPath(QPointF(newx, 1. / scale), Qt::black, true);
 		}
 	} else {
-		drawPath(startPoint, -EPS, Qt::lightGray);
-		drawPath(startPoint, EPS);
+		drawPath(startPoint, Qt::lightGray, true);
+		drawPath(startPoint);
 	}
 	QString statusText = tr("Parameter: %1;  Point type: %2;  Scale: %3").arg(
 		QString::number(param, 'f', 2),
@@ -169,12 +184,13 @@ void DrawArea::drawAxes(qreal ticksize) {
 	}
 }
 
-void DrawArea::drawPath(QPointF start, qreal eps, QColor color) {
+void DrawArea::drawPath(QPointF start, QColor color, bool backwards) {
 	DEFINE_RECT;
 	QPainter painter(this);
 	painter.setPen(color);
 	painter.setRenderHint(QPainter::Antialiasing);
 	QPointF point;
+	qreal eps = backwards ? -precision : precision;
 	qreal staticPoint = system->findPoincareStaticPoint(.1, 5, qAbs(eps));
 	qreal xdiff = !start.isNull();
 	quint32 step = 0;
