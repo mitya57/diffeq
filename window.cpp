@@ -104,7 +104,6 @@ void DrawArea::drawMesh(bool yes) {
 }
 
 void DrawArea::paintEvent(QPaintEvent *event) {
-	DEFINE_RECT;
 	QWidget::paintEvent(event);
 	drawAxes(5);
 	qreal staticPoint = system->findPoincareStaticPoint(.1, 5, EPS);
@@ -113,14 +112,11 @@ void DrawArea::paintEvent(QPaintEvent *event) {
 	}
 	if (doDrawMesh) {
 		for (int i = 0; i <= POINTS; ++i) {
-			drawPath(QPointF(CONVERTBACK_X((x1 * i + x2 * (POINTS - i)) / POINTS),
-				CONVERTBACK_Y(y1)), EPS);
-			drawPath(QPointF(CONVERTBACK_X((x1 * i + x2 * (POINTS - i)) / POINTS),
-				CONVERTBACK_Y(y1)), -EPS);
-			drawPath(QPointF(CONVERTBACK_X((x1 * i + x2 * (POINTS - i)) / POINTS),
-				CONVERTBACK_Y(y2)), EPS);
-			drawPath(QPointF(CONVERTBACK_X((x1 * i + x2 * (POINTS - i)) / POINTS),
-				CONVERTBACK_Y(y2)), -EPS);
+			qreal newx = (1 - 2. * i / POINTS) / scale;
+			drawPath(QPointF(newx, -1. / scale), EPS);
+			drawPath(QPointF(newx, -1. / scale), -EPS);
+			drawPath(QPointF(newx, 1. / scale), EPS);
+			drawPath(QPointF(newx, 1. / scale), -EPS);
 		}
 	} else {
 		drawPath(startPoint, -EPS, Qt::lightGray);
@@ -157,17 +153,17 @@ void DrawArea::drawAxes(qreal ticksize) {
 	DEFINE_RECT;
 	QPainter painter(this);
 	painter.setPen(Qt::lightGray);
-	painter.drawLine((x1+x2)/2, y1, (x1+x2)/2, y2);
-	painter.drawLine(x1, (y1+y2)/2, x2, (y1+y2)/2);
-	qreal newx = 0, startx = CONVERT_X(0), starty = CONVERT_Y(0);
+	qreal newx = 0, startx = (x1 + x2) / 2, starty = (y1 + y2) / 2;
+	painter.drawLine(startx, y1, startx, y2);
+	painter.drawLine(x1, starty, x2, starty);
 	for (int x = 0; startx+newx < x2; ++x) {
 		newx = x * scale * (x2 - x1) / 2;
 		painter.drawLine(startx+newx, starty-ticksize, startx+newx, starty+ticksize);
 		painter.drawLine(startx-newx, starty-ticksize, startx-newx, starty+ticksize);
 	}
 	qreal newy = 0;
-	for (int y = 0; starty+newy < y2; ++y) {
-		newy = y * scale * (y2 - y1) / 2;
+	for (int y = 0; starty+newy < y1; ++y) {
+		newy = y * scale * (y1 - y2) / 2;
 		painter.drawLine(startx-ticksize, starty+newy, startx+ticksize, starty+newy);
 		painter.drawLine(startx-ticksize, starty-newy, startx+ticksize, starty-newy);
 	}
