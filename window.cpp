@@ -131,7 +131,7 @@ void DrawArea::paintEvent(QPaintEvent *event) {
 void DrawArea::wheelEvent(QWheelEvent *event) {
 	int delta = event->delta();
 	qreal newScale = scale * qExp(qreal(delta) / 2048);
-	if (newScale > 0.05 && newScale < 30) {
+	if (newScale > 0.08 && newScale < 30) {
 		scale = newScale;
 		repaint();
 	}
