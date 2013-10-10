@@ -71,6 +71,8 @@ DrawArea::DrawArea(PolynomSystem *system, QWidget *parent):
 	scale(.2),
 	param(1),
 	precision(0.1),
+	stPoint(0),
+	period(0),
 	doDrawMesh(false),
 	startPoint(2, 0),
 	system(system)
@@ -96,6 +98,8 @@ void DrawArea::updateSystem() {
 	fillSystem(fileName, *system, param);
 	PointType pointType = system->getPointType();
 	pointTypeName = getPointTypeName(pointType);
+	stPoint = system->findPoincareStaticPoint(.1, 5, precision);
+	period = stPoint ? system->getPeriod(stPoint, precision) : 0;
 	repaint();
 }
 
@@ -121,7 +125,6 @@ void DrawArea::drawMesh(bool yes) {
 void DrawArea::paintEvent(QPaintEvent *event) {
 	QWidget::paintEvent(event);
 	drawAxes(5);
-	qreal stPoint = system->findPoincareStaticPoint(.1, 5, precision);
 	if (qAbs(stPoint) > precision) {
 		drawPath(QPointF(stPoint, 0), stPoint);
 	}
@@ -141,6 +144,10 @@ void DrawArea::paintEvent(QPaintEvent *event) {
 		QString::number(param, 'f', 2),
 		pointTypeName, QString::number(scale * 5, 'g', 3));
 	QPainter(this).drawText(10, height() - 10, statusText);
+	if (period) {
+		QPainter(this).drawText(10, height() - 25,
+			tr("Period: %1").arg(period));
+	}
 }
 
 void DrawArea::wheelEvent(QWheelEvent *event) {

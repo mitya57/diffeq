@@ -65,6 +65,18 @@ qreal PolynomSystem::findPoincareStaticPoint(qreal a, qreal b, qreal eps) {
 	return b;
 }
 
+qreal PolynomSystem::getPeriod(qreal staticPoint, qreal eps) {
+	QPointF point(staticPoint, 0);
+	quint32 step = 0;
+	qreal diff = 0;
+	while (step < 5 || qAbs(diff) > eps / 2) {
+		point = getNextValue(point, eps, true);
+		diff = qPow(point.x() - staticPoint, 2) + qPow(point.y(), 2);
+		++step;
+	}
+	return step * eps;
+}
+
 void fillPolynom(QString line, Polynom &polynom, qreal param) {
 	QStringList parts = line.split("  ");
 	QStringList subParts;

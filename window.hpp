@@ -26,6 +26,8 @@ private:
 	qreal scale;
 	qreal param;
 	qreal precision;
+	qreal stPoint;
+	qreal period;
 	bool doDrawMesh;
 	QPointF startPoint;
 	PolynomSystem *system;

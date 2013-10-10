@@ -36,6 +36,7 @@ public:
 	QPointF getNextValue(QPointF point, qreal eps, bool useRungeKutta = false);
 	qreal poincareFunction(qreal p, qreal eps);
 	qreal findPoincareStaticPoint(qreal a, qreal b, qreal eps);
+	qreal getPeriod(qreal staticPoint, qreal eps);
 	ComplexPair getEigenValues();
 	PointType getPointType();
 };
