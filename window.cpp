@@ -121,21 +121,21 @@ void DrawArea::drawMesh(bool yes) {
 void DrawArea::paintEvent(QPaintEvent *event) {
 	QWidget::paintEvent(event);
 	drawAxes(5);
-	qreal staticPoint = system->findPoincareStaticPoint(.1, 5, precision);
-	if (qAbs(staticPoint) > precision) {
-		drawPath(QPointF(staticPoint, 0));
+	qreal stPoint = system->findPoincareStaticPoint(.1, 5, precision);
+	if (qAbs(stPoint) > precision) {
+		drawPath(QPointF(stPoint, 0), stPoint);
 	}
 	if (doDrawMesh) {
 		for (int i = 0; i <= POINTS; ++i) {
 			qreal newx = (1 - 2. * i / POINTS) / scale;
-			drawPath(QPointF(newx, -1. / scale));
-			drawPath(QPointF(newx, -1. / scale), Qt::black, true);
-			drawPath(QPointF(newx, 1. / scale));
-			drawPath(QPointF(newx, 1. / scale), Qt::black, true);
+			drawPath(QPointF(newx, -1. / scale), stPoint);
+			drawPath(QPointF(newx, -1. / scale), stPoint, Qt::black, true);
+			drawPath(QPointF(newx, 1. / scale), stPoint);
+			drawPath(QPointF(newx, 1. / scale), stPoint, Qt::black, true);
 		}
 	} else {
-		drawPath(startPoint, Qt::lightGray, true);
-		drawPath(startPoint);
+		drawPath(startPoint, stPoint, Qt::lightGray, true);
+		drawPath(startPoint, stPoint);
 	}
 	QString statusText = tr("Parameter: %1;  Point type: %2;  Scale: %3").arg(
 		QString::number(param, 'f', 2),
@@ -184,21 +184,20 @@ void DrawArea::drawAxes(qreal ticksize) {
 	}
 }
 
-void DrawArea::drawPath(QPointF start, QColor color, bool backwards) {
+void DrawArea::drawPath(QPointF start, qreal stPoint, QColor color, bool backwards) {
 	DEFINE_RECT;
 	QPainter painter(this);
 	painter.setPen(color);
 	painter.setRenderHint(QPainter::Antialiasing);
 	QPointF point;
 	qreal eps = backwards ? -precision : precision;
-	qreal staticPoint = system->findPoincareStaticPoint(.1, 5, qAbs(eps));
 	qreal xdiff = !start.isNull();
 	quint32 step = 0;
 	while (qAbs(xdiff) > 1e-3 && step < 1000) {
 		point = system->getNextValue(start, eps);
 		painter.drawLine(CONVERT(start), CONVERT(point));
-		if (qAbs(point.y()) < qAbs(eps) && point.x() > 0 && staticPoint > 0) {
-			xdiff = point.x() - staticPoint;
+		if (qAbs(point.y()) < qAbs(eps) && point.x() > 0 && stPoint > 0) {
+			xdiff = point.x() - stPoint;
 		}
 		start = point;
 		++step;

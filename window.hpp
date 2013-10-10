@@ -33,7 +33,7 @@ private:
 	QString fileName;
 
 	void drawAxes(qreal ticksize);
-	void drawPath(QPointF start, QColor color = Qt::black, bool backwards = false);
+	void drawPath(QPointF start, qreal stPoint, QColor color = Qt::black, bool backwards = false);
 	QString getPointTypeName(PointType type);
 	void updateSystem();
 };
