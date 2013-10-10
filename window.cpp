@@ -71,7 +71,7 @@ DrawArea::DrawArea(PolynomSystem *system, QWidget *parent):
 	QWidget(parent),
 	scale(.2),
 	param(1),
-	precision(0.1),
+	precision(0.05),
 	stPoint(0),
 	period(0),
 	doDrawMesh(false),
@@ -202,7 +202,7 @@ void DrawArea::drawPath(QPointF start, qreal stPoint, QColor color, bool backwar
 	qreal eps = backwards ? -precision : precision;
 	qreal xdiff = !start.isNull();
 	quint32 step = 0;
-	while (step < 5 || (qAbs(xdiff) > 1e-4 && step < 50. / eps)) {
+	while (step < 5 || (qAbs(xdiff) > 1e-4 && step < 50. / precision)) {
 		point = system->getNextValue(start, eps);
 		painter.drawLine(CONVERT(start), CONVERT(point));
 		if (qAbs(point.y()) < qAbs(eps) && point.x() > 0 && stPoint > 0) {
