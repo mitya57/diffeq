@@ -52,6 +52,7 @@ MyMainWindow::MyMainWindow(PolynomSystem *system):
 	precisionBox.addItem("0.01", 0.01);
 	precisionBox.addItem("0.005", 0.005);
 	precisionBox.addItem("0.001", 0.001);
+	precisionBox.setCurrentIndex(1); // 0.05
 	connect(&precisionBox, SIGNAL(currentIndexChanged(int)),
 		&drawArea, SLOT(updatePrecision(int)));
 
@@ -91,6 +92,7 @@ void DrawArea::updateParam(int sliderParam) {
 void DrawArea::updatePrecision(int index) {
 	QComboBox *comboBox = qobject_cast<QComboBox *>(sender());
 	precision = comboBox->itemData(index).toDouble();
+	stPoint = system->findPoincareStaticPoint(.1, 5, precision);
 	repaint();
 }
 
@@ -200,7 +202,7 @@ void DrawArea::drawPath(QPointF start, qreal stPoint, QColor color, bool backwar
 	qreal eps = backwards ? -precision : precision;
 	qreal xdiff = !start.isNull();
 	quint32 step = 0;
-	while (qAbs(xdiff) > 1e-3 && step < 1000) {
+	while (step < 5 || (qAbs(xdiff) > 1e-4 && step < 50. / eps)) {
 		point = system->getNextValue(start, eps);
 		painter.drawLine(CONVERT(start), CONVERT(point));
 		if (qAbs(point.y()) < qAbs(eps) && point.x() > 0 && stPoint > 0) {
