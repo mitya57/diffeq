@@ -41,7 +41,7 @@ qreal PolynomSystem::poincareFunction(qreal p, qreal eps) const {
 	quint32 step = 0;
 	while (step < 10 || point.x() < 0 || qAbs(point.y()) > eps) {
 		point = getNextValue(point, eps);
-		if (step > 1000) {
+		if (step > 50. / eps) {
 			return 0;
 		}
 		++step;
