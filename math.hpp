@@ -27,18 +27,18 @@ typedef QPair<Complex, Complex> ComplexPair;
 
 class Polynom: public QList<Monom> {
 public:
-	qreal operator()(qreal x, qreal y);
-	qreal operator()(QPointF point);
+	qreal operator()(qreal x, qreal y) const;
+	qreal operator()(QPointF point) const;
 };
 
 class PolynomSystem: public QPair<Polynom, Polynom> {
 public:
-	QPointF getNextValue(QPointF point, qreal eps, bool useRungeKutta = false);
-	qreal poincareFunction(qreal p, qreal eps);
-	qreal findPoincareStaticPoint(qreal a, qreal b, qreal eps);
-	qreal getPeriod(qreal staticPoint, qreal eps);
-	ComplexPair getEigenValues();
-	PointType getPointType();
+	QPointF getNextValue(QPointF point, qreal eps, bool useRungeKutta = false) const;
+	qreal poincareFunction(qreal p, qreal eps) const;
+	qreal findPoincareStaticPoint(qreal a, qreal b, qreal eps) const;
+	qreal getPeriod(qreal staticPoint, qreal eps) const;
+	ComplexPair getEigenValues() const;
+	PointType getPointType() const;
 };
 
 void fillPolynom(QString line, Polynom &polynom, qreal param = 0);

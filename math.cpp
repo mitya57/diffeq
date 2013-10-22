@@ -4,7 +4,7 @@
 #include <QtGui/QVector2D>
 #include "math.hpp"
 
-qreal Polynom::operator()(qreal x, qreal y) {
+qreal Polynom::operator()(qreal x, qreal y) const {
 	qreal result = 0;
 	for (ConstIterator i = begin(); i != end(); ++i) {
 		result += qPow(x, i->xPow) * qPow(y, i->yPow) * i->c;
@@ -12,11 +12,11 @@ qreal Polynom::operator()(qreal x, qreal y) {
 	return result;
 }
 
-qreal Polynom::operator()(QPointF point) {
+qreal Polynom::operator()(QPointF point) const {
 	return operator()(point.x(), point.y());
 }
 
-QPointF PolynomSystem::getNextValue(QPointF point, qreal eps, bool useRungeKutta) {
+QPointF PolynomSystem::getNextValue(QPointF point, qreal eps, bool useRungeKutta) const {
 	QVector2D diff(first(point), second(point));
 	if (useRungeKutta) {
 		qreal x = point.x(), y = point.y();
@@ -36,7 +36,7 @@ QPointF PolynomSystem::getNextValue(QPointF point, qreal eps, bool useRungeKutta
 	return point + diff.toPointF();
 }
 
-qreal PolynomSystem::poincareFunction(qreal p, qreal eps) {
+qreal PolynomSystem::poincareFunction(qreal p, qreal eps) const {
 	QPointF point(p, 0);
 	quint32 step = 0;
 	while (step < 10 || point.x() < 0 || qAbs(point.y()) > eps) {
@@ -49,7 +49,7 @@ qreal PolynomSystem::poincareFunction(qreal p, qreal eps) {
 	return point.x();
 }
 
-qreal PolynomSystem::findPoincareStaticPoint(qreal a, qreal b, qreal eps) {
+qreal PolynomSystem::findPoincareStaticPoint(qreal a, qreal b, qreal eps) const {
 	qreal pdiffa = poincareFunction(a, eps) - a;
 	qreal pdiffb = poincareFunction(b, eps) - b;
 	if (pdiffa * pdiffb > 0) {
@@ -65,7 +65,7 @@ qreal PolynomSystem::findPoincareStaticPoint(qreal a, qreal b, qreal eps) {
 	return b;
 }
 
-qreal PolynomSystem::getPeriod(qreal staticPoint, qreal eps) {
+qreal PolynomSystem::getPeriod(qreal staticPoint, qreal eps) const {
 	QPointF point(staticPoint, 0);
 	quint32 step = 0;
 	qreal diff = 0;
@@ -91,7 +91,7 @@ void fillPolynom(QString line, Polynom &polynom, qreal param) {
 	}
 }
 
-ComplexPair PolynomSystem::getEigenValues() {
+ComplexPair PolynomSystem::getEigenValues() const {
 	ComplexPair result;
 	qreal a = 0, b = 0, c = 0, d = 0;
 	Polynom::ConstIterator i;
@@ -116,7 +116,7 @@ ComplexPair PolynomSystem::getEigenValues() {
 	return result;
 }
 
-PointType PolynomSystem::getPointType() {
+PointType PolynomSystem::getPointType() const {
 	ComplexPair eigenValues = getEigenValues();
 	Complex v1 = eigenValues.first, v2 = eigenValues.second;
 	if (qFuzzyIsNull(v1.real()) && qFuzzyIsNull(v2.real())) {
