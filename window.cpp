@@ -52,7 +52,7 @@ MyMainWindow::MyMainWindow(PolynomSystem *system):
 	precisionBox.addItem("0.01", 0.01);
 	precisionBox.addItem("0.005", 0.005);
 	precisionBox.addItem("0.001", 0.001);
-	precisionBox.setCurrentIndex(1); // 0.05
+	precisionBox.setCurrentIndex(2); // 0.01
 	connect(&precisionBox, SIGNAL(currentIndexChanged(int)),
 		&drawArea, SLOT(updatePrecision(int)));
 
