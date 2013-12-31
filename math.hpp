@@ -29,6 +29,8 @@ class Polynom: public QList<Monom> {
 public:
 	qreal operator()(qreal x, qreal y) const;
 	qreal operator()(QPointF point) const;
+	Polynom differentiateX() const;
+	Polynom differentiateY() const;
 };
 
 class PolynomSystem: public QPair<Polynom, Polynom> {

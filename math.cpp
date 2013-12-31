@@ -16,6 +16,34 @@ qreal Polynom::operator()(QPointF point) const {
 	return operator()(point.x(), point.y());
 }
 
+Polynom Polynom::differentiateX() const {
+	Polynom result;
+	Monom m;
+	for (ConstIterator i = begin(); i != end(); ++i) {
+		if (i->xPow) {
+			m.xPow = i->xPow - 1;
+			m.yPow = i->yPow;
+			m.c = i->c * i->xPow;
+			result.push_back(m);
+		}
+	}
+	return result;
+}
+
+Polynom Polynom::differentiateY() const {
+	Polynom result;
+	Monom m;
+	for (ConstIterator i = begin(); i != end(); ++i) {
+		if (i->yPow) {
+			m.xPow = i->xPow;
+			m.yPow = i->yPow - 1;
+			m.c = i->c * i->yPow;
+			result.push_back(m);
+		}
+	}
+	return result;
+}
+
 QPointF PolynomSystem::getNextValue(QPointF point, qreal eps, bool useRungeKutta) const {
 	QVector2D diff(first(point), second(point));
 	if (useRungeKutta) {
