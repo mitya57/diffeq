@@ -98,7 +98,7 @@ void DrawArea::updatePrecision(int index) {
 
 void DrawArea::updateSystem() {
 	fillSystem(fileName, *system, param);
-	PointType pointType = system->getPointType();
+	PointType pointType = system->getPointType(QPointF());
 	pointTypeName = getPointTypeName(pointType);
 	stPoint = system->findPoincareStaticPoint(.1, 5, precision);
 	period = stPoint ? system->getPeriod(stPoint, precision) : 0;

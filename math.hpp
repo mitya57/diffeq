@@ -39,8 +39,8 @@ public:
 	qreal poincareFunction(qreal p, qreal eps) const;
 	qreal findPoincareStaticPoint(qreal a, qreal b, qreal eps) const;
 	qreal getPeriod(qreal staticPoint, qreal eps) const;
-	ComplexPair getEigenValues() const;
-	PointType getPointType() const;
+	ComplexPair getEigenValues(QPointF point) const;
+	PointType getPointType(QPointF point) const;
 };
 
 void fillPolynom(QString line, Polynom &polynom, qreal param = 0);

@@ -119,24 +119,12 @@ void fillPolynom(QString line, Polynom &polynom, qreal param) {
 	}
 }
 
-ComplexPair PolynomSystem::getEigenValues() const {
+ComplexPair PolynomSystem::getEigenValues(QPointF point) const {
 	ComplexPair result;
-	qreal a = 0, b = 0, c = 0, d = 0;
-	Polynom::ConstIterator i;
-	for (i = first.begin(); i != first.end(); ++i) {
-		if (i->xPow == 1 && i->yPow == 0) {
-			a = i->c;
-		} else if (i->xPow == 0 && i->yPow == 1) {
-			b = i->c;
-		}
-	}
-	for (i = second.begin(); i != second.end(); ++i) {
-		if (i->xPow == 1 && i->yPow == 0) {
-			c = i->c;
-		} else if (i->xPow == 0 && i->yPow == 1) {
-			d = i->c;
-		}
-	}
+	qreal a = first.differentiateX()(point),
+	      b = first.differentiateY()(point),
+	      c = second.differentiateX()(point),
+	      d = second.differentiateY()(point);
 	qreal determinant = (a - d) * (a - d) + 4 * b * c;
 	Complex detSqrt = std::sqrt(Complex(determinant, 0));
 	result.first  = (Complex(a + d, 0) + detSqrt) * Complex(.5, 0);
@@ -144,8 +132,8 @@ ComplexPair PolynomSystem::getEigenValues() const {
 	return result;
 }
 
-PointType PolynomSystem::getPointType() const {
-	ComplexPair eigenValues = getEigenValues();
+PointType PolynomSystem::getPointType(QPointF point) const {
+	ComplexPair eigenValues = getEigenValues(point);
 	Complex v1 = eigenValues.first, v2 = eigenValues.second;
 	if (qFuzzyIsNull(v1.real()) && qFuzzyIsNull(v2.real())) {
 		return PointCenter;
