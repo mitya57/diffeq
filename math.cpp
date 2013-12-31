@@ -39,7 +39,7 @@ QPointF PolynomSystem::getNextValue(QPointF point, qreal eps, bool useRungeKutta
 qreal PolynomSystem::poincareFunction(qreal p, qreal eps) const {
 	QPointF point(p, 0);
 	quint32 step = 0;
-	while (step < 10 || point.x() < 0 || qAbs(point.y()) > eps) {
+	while (step < 20 || point.x() < 0 || qAbs(point.y()) > eps) {
 		point = getNextValue(point, eps);
 		if (step > 50. / eps) {
 			return 0;
