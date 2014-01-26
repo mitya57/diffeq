@@ -41,10 +41,10 @@ MyMainWindow::MyMainWindow(PolynomSystem *system):
 	}
 	connect(&fileActionGroup, SIGNAL(triggered(QAction*)),
 		&drawArea, SLOT(loadFile(QAction*)));
-	paramSlider.setTickInterval(50);
+	paramSlider.setTickInterval(100);
 	paramSlider.setTickPosition(QSlider::TicksBothSides);
-	paramSlider.setRange(0, 300);
-	paramSlider.setValue(150);
+	paramSlider.setRange(0, 600);
+	paramSlider.setValue(300);
 	connect(&paramSlider, SIGNAL(valueChanged(int)),
 		&drawArea, SLOT(updateParam(int)));
 	precisionBox.addItem("0.1", 0.1);
@@ -85,7 +85,7 @@ void DrawArea::loadFile(QAction *action) {
 }
 
 void DrawArea::updateParam(int sliderParam) {
-	param = sliderParam * .02 - 2;
+	param = sliderParam * .01 - 2;
 	updateSystem();
 }
 
