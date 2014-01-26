@@ -86,8 +86,14 @@ qreal PolynomSystem::findPoincareStaticPoint(qreal a, qreal b, qreal eps) const 
 	while (qAbs(b - a) > eps) {
 		pdiffa = poincareFunction(a, eps) - a;
 		pdiffb = poincareFunction(b, eps) - b;
+		if (qFuzzyCompare(pdiffa, pdiffb)) {
+			break;
+		}
 		a = b - (b - a) * pdiffb / (pdiffb - pdiffa);
 		pdiffa = poincareFunction(a, eps) - a;
+		if (qFuzzyCompare(pdiffa, pdiffb)) {
+			break;
+		}
 		b = a - (a - b) * pdiffa / (pdiffa - pdiffb);
 	}
 	return b;
