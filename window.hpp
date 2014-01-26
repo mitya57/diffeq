@@ -1,9 +1,9 @@
 #include <QtGui/QWheelEvent>
-#include <QtWidgets/QAction>
-#include <QtWidgets/QComboBox>
-#include <QtWidgets/QMainWindow>
-#include <QtWidgets/QSlider>
-#include <QtWidgets/QToolBar>
+#include <QtGui/QAction>
+#include <QtGui/QComboBox>
+#include <QtGui/QMainWindow>
+#include <QtGui/QSlider>
+#include <QtGui/QToolBar>
 #include "math.hpp"
 
 class DrawArea: public QWidget {
