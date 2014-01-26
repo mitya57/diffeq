@@ -20,7 +20,6 @@ public slots:
 	void loadFile(QAction *action);
 	void updateParam(int sliderParam);
 	void updatePrecision(int index);
-	void drawMesh(bool yes);
 
 private:
 	qreal scale;
@@ -28,7 +27,6 @@ private:
 	qreal precision;
 	qreal stPoint;
 	qreal period;
-	bool doDrawMesh;
 	QPointF startPoint;
 	PolynomSystem *system;
 	QString pointTypeName;
@@ -49,7 +47,6 @@ public:
 private:
 	DrawArea drawArea;
 	QToolBar toolBar;
-	QAction drawMeshAction;
 	QActionGroup fileActionGroup;
 	QSlider paramSlider;
 	QComboBox precisionBox;

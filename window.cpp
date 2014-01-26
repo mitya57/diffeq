@@ -17,7 +17,6 @@
 MyMainWindow::MyMainWindow(PolynomSystem *system):
 	drawArea(system, this),
 	toolBar("Toolbar", this),
-	drawMeshAction(tr("Draw Mesh"), this),
 	fileActionGroup(this),
 	paramSlider(Qt::Horizontal, this)
 {
@@ -56,11 +55,6 @@ MyMainWindow::MyMainWindow(PolynomSystem *system):
 	connect(&precisionBox, SIGNAL(currentIndexChanged(int)),
 		&drawArea, SLOT(updatePrecision(int)));
 
-	drawMeshAction.setCheckable(true);
-	toolBar.addSeparator();
-	toolBar.addAction(&drawMeshAction);
-	connect(&drawMeshAction, SIGNAL(triggered(bool)),
-		&drawArea, SLOT(drawMesh(bool)));
 	toolBar.addSeparator();
 	toolBar.addWidget(&paramSlider);
 	toolBar.addSeparator();
@@ -74,7 +68,6 @@ DrawArea::DrawArea(PolynomSystem *system, QWidget *parent):
 	precision(0.05),
 	stPoint(0),
 	period(0),
-	doDrawMesh(false),
 	startPoint(2, 0),
 	system(system)
 {}
@@ -119,29 +112,14 @@ QString DrawArea::getPointTypeName(PointType type) {
 	return QString();
 }
 
-void DrawArea::drawMesh(bool yes) {
-	doDrawMesh = yes;
-	repaint();
-}
-
 void DrawArea::paintEvent(QPaintEvent *event) {
 	QWidget::paintEvent(event);
 	drawAxes(5);
 	if (qAbs(stPoint) > precision) {
 		drawPath(QPointF(stPoint, 0), stPoint);
 	}
-	if (doDrawMesh) {
-		for (int i = 0; i <= POINTS; ++i) {
-			qreal newx = (1 - 2. * i / POINTS) / scale;
-			drawPath(QPointF(newx, -1. / scale), stPoint);
-			drawPath(QPointF(newx, -1. / scale), stPoint, Qt::black, true);
-			drawPath(QPointF(newx, 1. / scale), stPoint);
-			drawPath(QPointF(newx, 1. / scale), stPoint, Qt::black, true);
-		}
-	} else {
-		drawPath(startPoint, stPoint, Qt::lightGray, true);
-		drawPath(startPoint, stPoint);
-	}
+	drawPath(startPoint, stPoint, Qt::lightGray, true);
+	drawPath(startPoint, stPoint);
 	QString statusText = tr("Parameter: %1;  Point type: %2;  Scale: %3").arg(
 		QString::number(param, 'f', 2),
 		pointTypeName, QString::number(scale * 5, 'g', 3));
