@@ -115,9 +115,9 @@ QString DrawArea::getPointTypeName(PointType type) {
 void DrawArea::paintEvent(QPaintEvent *event) {
 	QWidget::paintEvent(event);
 	drawAxes(5);
-	if (qAbs(stPoint) > precision) {
-		drawPath(QPointF(stPoint, 0), stPoint);
-	}
+	//if (qAbs(stPoint) > precision) {
+	//	drawPath(QPointF(stPoint, 0), stPoint);
+	//}
 	drawPath(startPoint, stPoint, Qt::lightGray, true);
 	drawPath(startPoint, stPoint);
 	QString statusText = tr("Parameter: %1;  Point type: %2;  Scale: %3").arg(
@@ -128,9 +128,9 @@ void DrawArea::paintEvent(QPaintEvent *event) {
 		QString::number(startPoint.x()),
 		QString::number(startPoint.y())
 	);
-	if (!qFuzzyIsNull(period)) {
-		statusText2 += "  " + tr("Period: %1").arg(period);
-	}
+	//if (!qFuzzyIsNull(period)) {
+	//	statusText2 += "  " + tr("Period: %1").arg(period);
+	//}
 	QPainter(this).drawText(10, height() - 25, statusText2);
 }
 
