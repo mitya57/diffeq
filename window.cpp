@@ -146,10 +146,14 @@ void DrawArea::paintEvent(QPaintEvent *event) {
 		QString::number(param, 'f', 2),
 		pointTypeName, QString::number(scale * 5, 'g', 3));
 	QPainter(this).drawText(10, height() - 10, statusText);
+	QString statusText2 = tr("(%1, %2)").arg(
+		QString::number(startPoint.x()),
+		QString::number(startPoint.y())
+	);
 	if (!qFuzzyIsNull(period)) {
-		QPainter(this).drawText(10, height() - 25,
-			tr("Period: %1").arg(period));
+		statusText2 += "  " + tr("Period: %1").arg(period);
 	}
+	QPainter(this).drawText(10, height() - 25, statusText2);
 }
 
 void DrawArea::wheelEvent(QWheelEvent *event) {
