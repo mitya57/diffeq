@@ -101,7 +101,7 @@ void DrawArea::updateSystem() {
 	PointType pointType = system->getPointType(QPointF());
 	pointTypeName = getPointTypeName(pointType);
 	stPoint = system->findPoincareStaticPoint(.1, 5, precision);
-	period = stPoint ? system->getPeriod(stPoint, precision) : 0;
+	period = qFuzzyIsNull(stPoint) ? 0 : system->getPeriod(stPoint, precision);
 	repaint();
 }
 
@@ -146,7 +146,7 @@ void DrawArea::paintEvent(QPaintEvent *event) {
 		QString::number(param, 'f', 2),
 		pointTypeName, QString::number(scale * 5, 'g', 3));
 	QPainter(this).drawText(10, height() - 10, statusText);
-	if (period) {
+	if (!qFuzzyIsNull(period)) {
 		QPainter(this).drawText(10, height() - 25,
 			tr("Period: %1").arg(period));
 	}
