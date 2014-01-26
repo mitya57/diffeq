@@ -1,4 +1,4 @@
-CONFIG += debug warn_all
+CONFIG += release warn_all
 QT += widgets
 QMAKE_CXXFLAGS += -Wextra -Werror
 
